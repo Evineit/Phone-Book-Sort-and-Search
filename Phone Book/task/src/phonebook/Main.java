@@ -31,13 +31,9 @@ public class Main {
         System.out.println("Start searching...");
         long start = System.currentTimeMillis();
         for (String person : toFinds) {
-            for (String s : directory) {
-                String[] dir = s.split(" ", 2);
-                if (dir[1].equals(person)) {
+                if (linearSearch(directory,person)!=-1) {
                     counter++;
-                    break;
                 }
-            }
         }
         long finish = System.currentTimeMillis();
         System.out.println("Found " + counter + " / 500 entries. Time taken: " + miliProcess(finish - start));
@@ -56,11 +52,11 @@ public class Main {
         return String.format("%s min. %s sec. %s ms.", min, sec, mili);
     }
 
-    public static int linearSearch(ArrayList<String> arrayList,
+    public static int linearSearch(List<String> arrayList,
                                    String string) {
         int index = -1;
         for (int i = 0; i < arrayList.size(); i++) {
-            if (arrayList.get(i).equals(string)) {
+            if (arrayList.get(i).contains(string)) {
                 index = i;
             }
         }

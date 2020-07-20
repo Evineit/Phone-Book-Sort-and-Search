@@ -72,5 +72,18 @@ files:
     \    \n        return CheckResult.correct();\n    }\n}\n"
   learner_created: false
 feedback_link: https://hyperskill.org/projects/63/stages/341/implement
-status: Unchecked
-record: -1
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #1
+
+    Not found the part `sorting time` in your output.
+
+    Please find below the output of your program during this failed test.
+
+    ---
+
+    Start searching...
+    Found 500 / 500 entries. Time taken: 0 min. 6 sec. 6 ms.
+  time: Mon, 20 Jul 2020 05:45:45 UTC
+record: 2
