@@ -43,18 +43,8 @@ public class Main {
         counter=0;
         System.out.println("Start searching (bubble sort + jump search)...");
 
-        boolean stopped = false;
         Duration bubbleSortDuration = new Duration();
-
-        try {
-            bubbleSort(directory,bubbleSortDuration, linearSearchDuration.getMilliseconds()*10);
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            stopped=true;
-        }
-
-        if (!stopped){
+        if (bubbleSort(directory,bubbleSortDuration, linearSearchDuration.getMilliseconds()*10)){
             Duration jumpSearchDuration = new Duration();
             jumpSearchDuration.start();
             for (String person : toFinds) {
@@ -131,7 +121,7 @@ public class Main {
         return -1;
     }
 
-    public static List<String> bubbleSort(List<String> list, Duration duration, long maxTime) throws RuntimeException {
+    public static boolean bubbleSort(List<String> list, Duration duration, long maxTime) throws RuntimeException {
         duration.start();
         for (int i = 0; i < list.size() - 1; i++) {
             for (int j = 0; j < list.size() - i -1; j++) {
@@ -143,11 +133,11 @@ public class Main {
             }
             if (duration.getMillisSinceStart() > maxTime){
                 duration.stop();
-                throw new RuntimeException();
+                return false;
             }
         }
         duration.stop();
-        return list;
+        return true;
     }
     public static int linearSearch(List<String> arrayList,
                                    String string) {
