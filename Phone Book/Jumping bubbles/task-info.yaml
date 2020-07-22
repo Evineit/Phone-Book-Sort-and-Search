@@ -71,19 +71,13 @@ files:
     \ less than the first linear search time.\");\n            }\n        }\n    \
     \    \n        return CheckResult.correct();\n    }\n}\n"
   learner_created: false
+- name: src/phonebook/Duration.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/63/stages/341/implement
-status: Failed
+status: Solved
 feedback:
-  message: |-
-    Wrong answer in test #1
-
-    Not found the part `sorting time` in your output.
-
-    Please find below the output of your program during this failed test.
-
-    ---
-
-    Start searching...
-    Found 500 / 500 entries. Time taken: 0 min. 6 sec. 6 ms.
-  time: Mon, 20 Jul 2020 05:45:45 UTC
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/63/stages/341/implement">JetBrains
+    Academy</a>
+  time: Tue, 21 Jul 2020 23:56:46 UTC
 record: 2
