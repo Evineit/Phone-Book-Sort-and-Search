@@ -10,22 +10,28 @@ public class Main {
 
     public static void main(String[] args) {
         List<String> directory = new ArrayList<>();
+        List<String> dirCopy1 = new ArrayList<>();
+        List<String> dirCopy2 = new ArrayList<>();
         List<String> toFinds = new ArrayList<>();
         Duration bubbleSortDuration = new Duration();
+        Duration quickSortDuration = new Duration();
         Duration jumpSearchDuration = new Duration();
         Duration linearSearchDuration = new Duration();
+        Duration binarySearchDuration = new Duration();
 
         int counter;
 
         try {
             directory = Files.readAllLines(Path.of("C:\\Users\\kevin\\random\\directory.txt"));
             toFinds = Files.readAllLines(Path.of("C:\\Users\\kevin\\random\\find.txt"));
+            dirCopy1 = new ArrayList<>(directory);
+            dirCopy2 = new ArrayList<>(directory);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         counter = 0;
-        System.out.println("Start searching (linear search)...");
+        System.out.println("\nStart searching (linear search)...");
         linearSearchDuration.start();
         for (String person : toFinds) {
             if (linearSearch(directory, person) != -1) {
@@ -34,13 +40,14 @@ public class Main {
         }
         linearSearchDuration.stop();
         System.out.printf("Found %d / 500 entries. Time taken: %s%n", counter, linearSearchDuration);
-        counter = 0;
-        System.out.println("Start searching (bubble sort + jump search)...");
 
-        if (bubbleSort(directory, bubbleSortDuration, linearSearchDuration.getMilliseconds() * 10)) {
+        counter = 0;
+        System.out.println("\nStart searching (bubble quickSort + jump search)...");
+
+        if (bubbleSort(dirCopy1, bubbleSortDuration, linearSearchDuration.getMilliseconds() * 10)) {
             jumpSearchDuration.start();
             for (String person : toFinds) {
-                if (jumpSearch(directory, person) != -1) {
+                if (jumpSearch(dirCopy1, person) != -1) {
                     counter++;
                 }
             }
@@ -51,7 +58,7 @@ public class Main {
         } else {
             jumpSearchDuration.start();
             for (String person : toFinds) {
-                if (linearSearch(directory, person) != -1) {
+                if (linearSearch(dirCopy1, person) != -1) {
                     counter++;
                 }
             }
@@ -61,7 +68,114 @@ public class Main {
             System.out.printf("Sorting time: %s - STOPPED, moved to linear search %n", bubbleSortDuration);
         }
         System.out.printf("Searching time: %s%n", jumpSearchDuration);
+
+        counter = 0;
+        System.out.println("\nStart searching (quick quickSort + binary search)...");
+        quickSortDuration.start();
+        quickSort(dirCopy2, 0, dirCopy2.size() - 1);
+        quickSortDuration.stop();
+
+
+        binarySearchDuration.start();
+        for (String person : toFinds) {
+            if (binarySearch(dirCopy2, person, 0, dirCopy2.size() - 1) != -1) {
+                counter++;
+            }
+        }
+        binarySearchDuration.stop();
+        System.out.printf("Found %d / 500 entries. Time taken: %s%n", counter,
+                new Duration(quickSortDuration.getMilliseconds() + binarySearchDuration.getMilliseconds()));
+        System.out.printf("Sorting time: %s%n", quickSortDuration);
+        System.out.printf("Searching time: %s%n", binarySearchDuration);
+
+
     }
+
+    private static int partition(List<String> a, int lo, int hi) {
+        int i = lo;
+        int j = hi + 1;
+        String v = a.get(lo);
+        while (true) {
+            // find item on lo to swap
+            while (less(a.get(++i), v))
+                if (i == hi) break;
+
+            // find item on hi to swap
+            while (less(v, a.get(--j)))
+                if (j == lo) break;      // redundant since a[lo] acts as sentinel
+
+            // check if pointers cross
+            if (i >= j) break;
+
+            swap(a, i, j);
+        }
+
+        // put v = a[j] into position
+        swap(a, lo, j);
+
+        // with a[lo .. j-1] <= a[j] <= a[j+1 .. hi]
+        return j;
+    }
+
+    private static void swap(List<String> array, int i, int j) {
+        String temp = array.get(i);
+        array.set(i, array.get(j));
+        array.set(j, temp);
+    }
+
+    private static int median3(List<String> a, int i, int j, int k) {
+        return (less(a.get(i), a.get(j)) ?
+                (less(a.get(j), a.get(k)) ? j : less(a.get(i), a.get(k)) ? k : i) :
+                (less(a.get(k), a.get(j)) ? j : less(a.get(k), a.get(i)) ? k : i));
+    }
+
+    private static boolean less(String s, String s1) {
+        return s.charAt(9) < s1.charAt(9);
+    }
+
+    // quicksort the subarray from a[lo] to a[hi]
+    private static void quickSort(List<String> a, int lo, int hi) {
+        // cutoff to insertion quickSort
+        int n = hi - lo + 1;
+        if (n <= 8) {
+            insertionSort(a, lo, hi);
+            // show(a, lo, -1, -1, hi);
+            return;
+        }
+
+        int m = median3(a, lo, lo + n / 2, hi);
+        swap(a, m, lo);
+
+        int j = partition(a, lo, hi);
+        quickSort(a, lo, j - 1);
+        quickSort(a, j + 1, hi);
+    }
+    // partition the subarray a[lo .. hi] by returning an index j
+    // so that a[lo .. j-1] <= a[j] <= a[j+1 .. hi]
+
+    // quickSort from a[lo] to a[hi] using insertion quickSort
+    private static void insertionSort(List<String> a, int lo, int hi) {
+        for (int i = lo; i <= hi; i++)
+            for (int j = i; j > lo && less(a.get(j), a.get(j - 1)); j--)
+                swap(a, j, j - 1);
+    }
+
+
+    public static int binarySearch(List<String> array, String elem, int left, int right) {
+        while (left <= right) {
+            int mid = left + (right - left) / 2; // the index of the middle element
+
+            if (elem.contains(array.get(mid))) {
+                return mid; // the element is found, return its index
+            } else if (elem.charAt(0) < array.get(mid).charAt(9)) {
+                right = mid - 1; // go to the left subarray
+            } else {
+                left = mid + 1;  // go the the right subarray
+            }
+        }
+        return -1; // the element is not found
+    }
+
 
     public static int jumpSearch(List<String> array, String target) {
         int currentRight = 0; // right border of the current block
@@ -112,9 +226,9 @@ public class Main {
     }
 
     /**
-     * @param list List to be sorted
+     * @param list     List to be sorted
      * @param duration Duration object for timestamps
-     * @param maxTime Maximum time taken
+     * @param maxTime  Maximum time taken
      * @return Returns whether it finishes sorting
      */
     public static boolean bubbleSort(List<String> list, Duration duration, long maxTime) {
