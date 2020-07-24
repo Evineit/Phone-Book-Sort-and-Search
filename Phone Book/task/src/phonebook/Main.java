@@ -42,7 +42,7 @@ public class Main {
         System.out.printf("Found %d / 500 entries. Time taken: %s%n", counter, linearSearchDuration);
 
         counter = 0;
-        System.out.println("\nStart searching (bubble quickSort + jump search)...");
+        System.out.println("\nStart searching (bubble sort + jump search)...");
 
         if (bubbleSort(dirCopy1, bubbleSortDuration, linearSearchDuration.getMilliseconds() * 10)) {
             jumpSearchDuration.start();
@@ -70,11 +70,12 @@ public class Main {
         System.out.printf("Searching time: %s%n", jumpSearchDuration);
 
         counter = 0;
-        System.out.println("\nStart searching (quick quickSort + binary search)...");
+        System.out.println("\nStart searching (quick sort + binary search)...");
         quickSortDuration.start();
         quickSort(dirCopy2, 0, dirCopy2.size() - 1);
         quickSortDuration.stop();
 
+        if (!isSorted(dirCopy2)) throw new AssertionError();
 
         binarySearchDuration.start();
         for (String person : toFinds) {
@@ -129,8 +130,12 @@ public class Main {
                 (less(a.get(k), a.get(j)) ? j : less(a.get(k), a.get(i)) ? k : i));
     }
 
-    private static boolean less(String s, String s1) {
-        return s.charAt(9) < s1.charAt(9);
+    private static boolean less(String v, String w) {
+        return splitName(v).compareTo(splitName(w)) < 0;
+    }
+
+    private static String splitName(String s) {
+        return s.split(" ", 2)[1];
     }
 
     // quicksort the subarray from a[lo] to a[hi]
@@ -160,17 +165,25 @@ public class Main {
                 swap(a, j, j - 1);
     }
 
+    static boolean isSorted(List<String> array) {
+        for (int i = 0; i < array.size() - 1; ++i) {
+            if (splitName(array.get(i)).compareTo(splitName(array.get(i + 1))) > 0)
+                return false;
+        }
+        return true;
+    }
+
 
     public static int binarySearch(List<String> array, String elem, int left, int right) {
         while (left <= right) {
             int mid = left + (right - left) / 2; // the index of the middle element
-
-            if (elem.contains(array.get(mid))) {
+            int res = elem.compareTo(splitName(array.get(mid)));
+            if (res == 0) {
                 return mid; // the element is found, return its index
-            } else if (elem.charAt(0) < array.get(mid).charAt(9)) {
-                right = mid - 1; // go to the left subarray
+            } else if (res > 0) {
+                left = mid + 1; // go to the right subarray
             } else {
-                left = mid + 1;  // go the the right subarray
+                right = mid - 1; // go to the left subarray
             }
         }
         return -1; // the element is not found

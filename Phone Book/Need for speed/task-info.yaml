@@ -74,5 +74,16 @@ files:
     \ }\n}\n"
   learner_created: false
 feedback_link: https://hyperskill.org/projects/63/stages/342/implement
-status: Unchecked
+status: Failed
+feedback:
+  message: "Wrong answer in test #1\n\nYour output should contain 3 times the phrase\
+    \ `500 / 500`\n\nPlease find below the output of your program during this failed\
+    \ test.\n\n---\n\n\nStart searching (linear search)...\nFound 500 / 500 entries.\
+    \ Time taken: 0 min. 7 sec. 274 ms.\n\nStart searching (bubble sort + jump search)...\n\
+    Found 500 / 500 entries. Time taken: 1 min. 19 sec. 608 ms.\nSorting time: 1 min.\
+    \ 12 sec. 767 ms. - STOPPED, moved to linear search \nSearching time: 0 min. 6\
+    \ sec. 841 ms.\n\nStart searching (quick sort + binary search)...\nFound 0 / 500\
+    \ entries. Time taken: 0 min. 0 sec. 760 ms.\nSorting time: 0 min. 0 sec. 757\
+    \ ms.\nSearching time: 0 min. 0 sec. 3 ms."
+  time: Fri, 24 Jul 2020 08:10:15 UTC
 record: -1
