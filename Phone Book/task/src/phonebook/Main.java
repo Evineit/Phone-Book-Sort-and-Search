@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class Main {
@@ -13,11 +14,14 @@ public class Main {
         List<String> dirCopy1 = new ArrayList<>();
         List<String> dirCopy2 = new ArrayList<>();
         List<String> toFinds = new ArrayList<>();
+        Hashtable<String,String> hashtable = new Hashtable();
         Duration bubbleSortDuration = new Duration();
         Duration quickSortDuration = new Duration();
         Duration jumpSearchDuration = new Duration();
         Duration linearSearchDuration = new Duration();
         Duration binarySearchDuration = new Duration();
+        Duration hashTableDuration = new Duration();
+        Duration hashGetDuration = new Duration();
 
         int counter;
 
@@ -88,8 +92,24 @@ public class Main {
                 new Duration(quickSortDuration.getMilliseconds() + binarySearchDuration.getMilliseconds()));
         System.out.printf("Sorting time: %s%n", quickSortDuration);
         System.out.printf("Searching time: %s%n", binarySearchDuration);
-
-
+        counter=0;
+        System.out.println("\nStart searching (hash table)...");
+        hashTableDuration.start();
+        for (String s : directory) {
+            hashtable.put(splitName(s),splitNum(s));
+        }
+        hashTableDuration.stop();
+        hashGetDuration.start();
+        for (String person : toFinds) {
+            if (hashtable.get(person)!=null){
+                counter++;
+            }
+        }
+        hashGetDuration.stop();
+        System.out.printf("Found %d / 500 entries. Time taken: %s%n", counter,
+                new Duration(hashTableDuration.getMilliseconds() + hashGetDuration.getMilliseconds()));
+        System.out.printf("Creating time: %s%n", hashTableDuration);
+        System.out.printf("Searching time: %s%n", hashGetDuration);
     }
 
     private static int partition(List<String> a, int lo, int hi) {
@@ -136,6 +156,9 @@ public class Main {
 
     private static String splitName(String s) {
         return s.split(" ", 2)[1];
+    }
+    private static String splitNum(String s) {
+        return s.split(" ", 2)[0];
     }
 
     // quicksort the subarray from a[lo] to a[hi]
